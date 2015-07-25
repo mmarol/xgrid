@@ -1,0 +1,6 @@
+{
+  "name": "xgrid-site",
+  "dependencies": {
+    "xgrid": "~0.1.2"
+  }
+}
