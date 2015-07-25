@@ -1,6 +1,6 @@
 @import '../bower_components/xgrid/xgrid';
 
-$xgrid-gutter: 1rem;
+$xgrid-gutter: 0.5rem;
 
 :root {
   color: white;
@@ -31,7 +31,7 @@ h1 {
 }
 
 .container {
-  @include xgrid(x x x);
+  @include xgrid(x x x, 1rem);
   height: 100%;
 }
 
@@ -49,10 +49,6 @@ h1 {
 
 .grid:nth-child(4) {
   @include xgrid(x x x x);
-}
-
-.grid:nth-child(5) {
-  @include xgrid(xx x);
 }
 
 .grid:nth-child(6) {
