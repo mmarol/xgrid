@@ -1,0 +1,79 @@
+@import '../bower_components/xgrid/xgrid';
+
+$xgrid-gutter: 1rem;
+
+:root {
+  color: white;
+  font-size: 2vw;
+  font-family: 'Helvetica', 'Arial', sans-serif;
+  font-weight: bold;
+}
+
+:root,
+body {
+  height: 100%;
+}
+
+body * {
+  background-color: rgba(blue, 0.1875);
+}
+
+body {
+  margin: 0;
+}
+
+h1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  font-size: 10vw;
+}
+
+.container {
+  @include xgrid(x x x);
+  height: 100%;
+}
+
+.grid:nth-child(1) {
+  @include xgrid(x);
+}
+
+.grid:nth-child(2) {
+  @include xgrid(x x);
+}
+
+.grid:nth-child(3) {
+  @include xgrid(x x x);
+}
+
+.grid:nth-child(4) {
+  @include xgrid(x x x x);
+}
+
+.grid:nth-child(5) {
+  @include xgrid(xx x);
+}
+
+.grid:nth-child(6) {
+  @include xgrid(x x xx);
+}
+
+.grid:nth-child(7) {
+  @include xgrid(xxx xx x);
+}
+
+.grid:nth-child(8) {
+  @include xgrid(x xx x xx);
+}
+
+.grid:nth-child(9) {
+  @include xgrid(xx xxxxxx);
+}
+
+.item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  // height: 3rem;
+}
