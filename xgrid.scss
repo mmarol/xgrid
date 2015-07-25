@@ -6,7 +6,6 @@ $xgrid-gutter: 0.5rem !default;
   box-sizing: border-box;
 
   > * {
-    align-content: flex-start;
     box-sizing: border-box;
     width: 100%;
     min-width: 0;
@@ -76,6 +75,7 @@ $xgrid-gutter: 0.5rem !default;
 // @return {Length} $width
 @function xgrid-item-width($column-count, $span, $gutter) {
   $ratio: ($span / $column-count);
+  $ratio: $ratio - 0.00001; // Fix rounding errors caused by browsers.
   $width: percentage($ratio);
 
   // If applicable, calculate an adjusted width to account for gutters.
