@@ -1,0 +1,87 @@
+$xgrid-gutter: 0.5rem !default;
+
+%xgrid {
+  display: flex;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+
+  > * {
+    align-content: flex-start;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+// Creates a grid based on a layout.
+// @param {List} $layout
+@mixin xgrid($layout, $gutter: $xgrid-gutter) {
+  @extend %xgrid;
+
+  $item-count: length($layout);
+  $column-count: xgrid-column-count($layout);
+
+  // If all items span an equal width, only create a single selector that
+  // matches all items; otherwise, create a selector for each item. Then,
+  // set the width of each item.
+  @if $item-count == $column-count {
+    > * {
+      flex-basis: xgrid-item-width($column-count, 1, $gutter);
+    }
+  } @else {
+    @for $i from 1 through $item-count {
+      $column: nth($layout, $i);
+      $span: str-length($column);
+
+      > *:nth-child(#{$item-count}n + #{$i}) {
+        flex-basis: xgrid-item-width($column-count, $span, $gutter);
+      }
+    }
+  }
+
+  // Apply gutters, if applicable, to all items such that there are no gutters
+  // applied to the right side of the last item in a row and the bottom side of
+  // each item in the last row.
+  @if $gutter > 0 {
+    > *:not(:nth-child(-n + #{$item-count})) {
+      margin-top: $gutter;
+    }
+
+    @if $item-count > 1 {
+      > *:not(:nth-child(#{$item-count}n)) {
+        margin-right: $gutter;
+      }
+    }
+  }
+}
+
+// Returns the total number of columns per row for a grid layout.
+// @param {List} $layout
+// @return {Number} $column-count
+@function xgrid-column-count($layout) {
+  $column-count: 0;
+
+  @each $column in $layout {
+    $span: str-length($column);
+    $column-count: $column-count + $span;
+  }
+
+  @return $column-count;
+}
+
+// Returns a width based on the column span and gutter size of an item.
+// @param {Number} $column-count
+// @param {Number} $span
+// @param {Length} $gutter
+// @return {Length} $width
+@function xgrid-item-width($column-count, $span, $gutter) {
+  $ratio: ($span / $column-count);
+  $width: percentage($ratio);
+
+  // If applicable, calculate an adjusted width to account for gutters.
+  @if $ratio < 1 and $gutter != 0 {
+    $width: calc(#{$width} - (#{$gutter} * (1 - #{$ratio})));
+  }
+
+  @return $width;
+}
