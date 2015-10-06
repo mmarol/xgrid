@@ -1,6 +1,6 @@
 {
   "name": "xgrid",
-  "version": "0.1.2",
+  "version": "0.2.2",
   "description": "xGrid is a Sass grid system that uses flexbox and calc to generate responsive layouts.",
   "keywords": [
     "sass",
