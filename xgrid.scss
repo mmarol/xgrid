@@ -1,6 +1,8 @@
 $xgrid-gutter: 0.5rem !default;
 
-%xgrid {
+// Creates a grid based on a layout.
+// @param {List} $layout
+@mixin xgrid($layout, $gutter: $xgrid-gutter) {
   display: flex;
   flex-wrap: wrap;
   box-sizing: border-box;
@@ -10,12 +12,6 @@ $xgrid-gutter: 0.5rem !default;
     width: 100%;
     min-width: 0;
   }
-}
-
-// Creates a grid based on a layout.
-// @param {List} $layout
-@mixin xgrid($layout, $gutter: $xgrid-gutter) {
-  @extend %xgrid;
 
   $item-count: length($layout);
   $column-count: xgrid-column-count($layout);
