@@ -44,7 +44,7 @@ h1 {
 }
 
 .grid:nth-child(3) {
-  @include xgrid(x x x);
+  @include xgrid(x _x x);
 }
 
 .grid:nth-child(4) {
@@ -60,7 +60,7 @@ h1 {
 }
 
 .grid:nth-child(8) {
-  @include xgrid(x xx x xx);
+  @include xgrid(x xx __x xx);
 }
 
 .grid:nth-child(9) {
