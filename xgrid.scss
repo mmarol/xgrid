@@ -1,83 +1,129 @@
-$xgrid-gutter: 0.5rem !default;
+$gutter: 0.5rem !default;
 
-// Creates a grid based on a layout.
-// @param {List} $layout
-@mixin xgrid($layout, $gutter: $xgrid-gutter) {
-  display: flex;
-  flex-wrap: wrap;
-  box-sizing: border-box;
 
-  > * {
+@mixin xgrid($layout, $gutter: $gutter) {
+
+    display: flex;
+    flex-wrap: wrap;
     box-sizing: border-box;
-    width: 100%;
-    min-width: 0;
-  }
+    justify-content: flex-start;
 
-  $item-count: length($layout);
-  $column-count: xgrid-column-count($layout);
-
-  // If all items span an equal width, only create a single selector that
-  // matches all items; otherwise, create a selector for each item. Then,
-  // set the width of each item.
-  @if $item-count == $column-count {
     > * {
-      flex-basis: xgrid-item-width($column-count, 1, $gutter);
-    }
-  } @else {
-    @for $i from 1 through $item-count {
-      $column: nth($layout, $i);
-      $span: str-length($column);
-
-      > *:nth-child(#{$item-count}n + #{$i}) {
-        flex-basis: xgrid-item-width($column-count, $span, $gutter);
-      }
-    }
-  }
-
-  // Apply gutters, if applicable, to all items such that there are no gutters
-  // applied to the right side of the last item in a row and the bottom side of
-  // each item in the last row.
-  @if $gutter > 0 {
-    > *:not(:nth-child(-n + #{$item-count})) {
-      margin-top: $gutter;
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
     }
 
-    @if $item-count > 1 {
-      > *:not(:nth-child(#{$item-count}n)) {
-        margin-right: $gutter;
-      }
+    // get number of elements in list
+    $elementCount: length($layout);
+    // get the number of columns based on $layout
+    $columnCount: calcColumnCount($layout);
+
+    // Apply gutters, if applicable, to all items such that there are no gutters
+    // applied to the right side of the last item in a row and the bottom side of
+    // each item in the last row.
+    @if $gutter > 0 {
+        > *:not(:nth-child(-n + #{$elementCount})) {
+            margin-top: $gutter;
+        }
+
+        @if $elementCount > 1 {
+            > *:not(:nth-child(#{$elementCount}n)) {
+                margin-right: $gutter;
+            }
+        }
     }
-  }
+
+    // If all items span an equal width, only create a single selector that
+    // matches all items; otherwise, create a selector for each item. Then,
+    // set the width of each item.
+    @if $elementCount == $columnCount {
+        > * {
+            flex-basis: calcColumnWidth($columnCount, 1, $gutter);
+        }
+    } @else {
+        // for each element in the list
+        @for $i from 1 through $elementCount {
+            // column is the current item in the list
+            $column: nth($layout, $i);
+            $charCount: str-length($column);
+            // set base widths
+            $itemWidth: 0;
+            $marginWidth: 0;
+
+            // for each character in the item
+            @for $j from 1 through $charCount {
+                // set current character
+                $char: str-slice($column, $j, $j);
+                // if it's x
+                @if $char == 'x' {
+                    // add the number of x's
+                    $itemWidth: $itemWidth + 1;
+                    // if it's _
+                } @else if $char == '_' {
+                    // add the number of _'s
+                    $marginWidth: $marginWidth + 1;
+                }
+            }
+            // set the current item's width and margin
+            > *:nth-child(#{$elementCount}n + #{$i}) {
+                flex-basis: calcColumnWidth($columnCount, $itemWidth, $gutter);
+                margin-left: calcColumnMargin($columnCount, $marginWidth, $gutter);
+            }
+
+
+        }
+    }
 }
 
-// Returns the total number of columns per row for a grid layout.
-// @param {List} $layout
-// @return {Number} $column-count
-@function xgrid-column-count($layout) {
-  $column-count: 0;
+// calculates the number of columns
+@function calcColumnCount($layout) {
+    // start at 0
+    $columnCount: 0;
 
-  @each $column in $layout {
-    $span: str-length($column);
-    $column-count: $column-count + $span;
-  }
+    // for each column in $layout
+    @each $column in $layout {
+        // calculate the number of characters
+        $span: str-length($column);
+        // add the number of characters to column count
+        $columnCount: $columnCount + $span;
+        // loop through the rest of the elements to get the total number of columns
+    }
 
-  @return $column-count;
+    @return $columnCount;
 }
 
-// Returns a width based on the column span and gutter size of an item.
-// @param {Number} $column-count
-// @param {Number} $span
-// @param {Length} $gutter
-// @return {Length} $width
-@function xgrid-item-width($column-count, $span, $gutter) {
-  $ratio: ($span / $column-count);
-  $width: $ratio - 0.000001; // Fix rounding errors caused by browsers.
-  $width: percentage($width);
+@function calcColumnWidth($columnCount, $itemSpan, $gutter) {
+    $ratio: ($itemSpan / $columnCount); // get the width of each element based on number of x's in it
+    // Fix rounding errors caused by browsers.
+    $width: $ratio - 0.000001;
+    // convert to %
+    $width: percentage($width);
 
-  // If applicable, calculate an adjusted width to account for gutters.
-  @if $ratio < 1 and $gutter != 0 {
-    $width: calc(#{$width} - (#{$gutter} * (1 - #{$ratio})));
-  }
+    // If applicable, calculate an adjusted width to account for gutters.
+    @if $ratio < 1 and $gutter != 0 {
+        $width: calc(#{$width} - (#{$gutter} * (1 - #{$ratio})));
+    }
 
-  @return $width;
+    @return $width;
+}
+
+@function calcColumnMargin($columnCount, $itemMargin, $gutter) {
+    $ratio: ($itemMargin / $columnCount); // get the width of each element based on number of x's in it
+    // Fix rounding errors caused by browsers.
+    $margin: $ratio - 0.000001;
+    // convert to %
+    $margin: percentage($margin);
+
+    // If applicable, calculate an adjusted margin to account for gutters.
+    @if $ratio < 1 and $gutter != 0 {
+        @if $itemMargin != 0 {
+            $margin: calc((#{$margin} - (#{$gutter} * (1 - #{$ratio}))) + #{$gutter});
+            // $margin: #{$margin};
+        } @else {
+            $margin: 0;
+        }
+    }
+
+    @return $margin;
 }
